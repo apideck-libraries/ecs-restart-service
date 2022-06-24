@@ -1,19 +1,22 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import { updateService } from './updateService'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const service = core.getInput('service')
+    const cluster: string | undefined = core.getInput('cluster')
+    const forceNewDeployment = core.getInput('force-new-deployment') === 'true'
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.info('Restarting the service')
 
-    core.setOutput('time', new Date().toTimeString())
+    const result = await updateService({ service, cluster, forceNewDeployment })
+
+    core.info(
+      `Service successfully restarted: ${result.$response.httpResponse.statusMessage}`
+    )
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
 }
 
-run()
+void run()
