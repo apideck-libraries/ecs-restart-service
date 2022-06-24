@@ -1,6 +1,9 @@
 name: 'ECS Restart Service'
 description: 'Restart an ECS service without code changes'
 author: 'Apideck'
+branding:
+  icon: 'arrow-up'
+  color: 'purple'
 inputs:
   service:
     required: true
